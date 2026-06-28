@@ -1,0 +1,30 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Files/Folders created by Agent (Antigravity/Claude logs)
+*.log
+.system_generated/
+scratch/
+
+# Environments and Secrets
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env.*
+.git-credentials
+.netrc
+
+# IDE / Editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*~
