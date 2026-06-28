@@ -40,3 +40,8 @@ El optimizador del equipo (`optimizar_equipo.sh`) debe ejecutarse de forma recur
 
 ### 2.3. Autenticación y Seguridad (Fase IV)
 Toda interacción con repositorios remotos debe realizarse estrictamente por SSH (criptografía Ed25519) enlazado al Llavero de macOS para evitar la exposición de credenciales y tokens en texto plano.
+
+### 2.4. Integración de Habilidades de Orquestación (Clarificación e Interacción)
+Para garantizar la seguridad operacional en la terminal del usuario, la ejecución de esta metodología debe estar vinculada obligatoriamente a habilidades de gobernanza:
+1.  **Activación de `clarifica-una-a-una`:** Antes de instalar software en lote, modificar variables de entorno globales en `.zshrc` o aplicar configuraciones de sistema defaults de macOS, el agente debe evaluar ambigüedades. Si hay alternativas de stack o versiones, se debe invocar obligatoriamente a la skill `clarifica-una-a-una` para hacer preguntas de opción múltiple una a la vez al desarrollador antes de escribir archivos o ejecutar comandos.
+2.  **Uso de `premortem`:** Antes de proponer comandos de purga profunda en el disco o en la memoria del sistema, se debe correr un análisis rápido de fallas (Premortem) para asegurar que el sistema no interrumpa servicios locales críticos activos (ej: bases de datos o servidores locales de desarrollo).
