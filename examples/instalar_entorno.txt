@@ -1,0 +1,123 @@
+#!/bin/zsh
+
+# Script interactivo paso a paso para instalar Homebrew y dependencias de Antigravity en macOS
+# Guardado en /Users/yarelyvarela/Code/instalar_entorno.sh (Copia compartible: instalar_entorno.txt)
+
+# Colores para salida en terminal
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+echo -e "${BLUE}======================================================================${NC}"
+echo -e "${BLUE}  INSTALADOR PASO A PASO: HOMEBREW Y REQUISITOS DE ANTIGRAVITY-CLI    ${NC}"
+echo -e "${BLUE}======================================================================${NC}"
+echo -e "Este script te guiará de forma interactiva y paso a paso para configurar"
+echo -e "tu entorno de desarrollo en macOS.\n"
+
+pausa() {
+    echo -e "\n${YELLOW}Presiona [ENTER] para continuar al siguiente paso o [Ctrl+C] para cancelar...${NC}"
+    read -r
+}
+
+# ------------------------------------------------------------------------------
+# PASO 1: Verificar Herramientas de Línea de Comandos de Xcode (Xcode CLI Tools)
+# ------------------------------------------------------------------------------
+echo -e "${GREEN}[PASO 1/5] Verificación de Xcode Command Line Tools...${NC}"
+if xcode-select -p &>/dev/null; then
+    echo -e "✓ Xcode Command Line Tools ya están instaladas."
+else
+    echo -e "✗ Xcode Command Line Tools no detectadas."
+    echo -e "Se requiere esta herramienta de Apple para compilar e instalar paquetes."
+    echo -e "Iniciando instalador nativo de macOS..."
+    xcode-select --install
+    echo -e "${YELLOW}Por favor, completa la instalación en la ventana emergente de macOS antes de continuar.${NC}"
+fi
+pausa
+
+# ------------------------------------------------------------------------------
+# PASO 2: Instalar Homebrew
+# ------------------------------------------------------------------------------
+echo -e "${GREEN}[PASO 2/5] Instalación de Homebrew...${NC}"
+if command -v brew &>/dev/null; then
+    echo -e "✓ Homebrew ya está instalado en el sistema."
+    brew --version
+else
+    echo -e "Instalando Homebrew (el gestor de paquetes de macOS)..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+    # Detectar arquitectura para configurar el PATH en el archivo correspondiente (.zshrc)
+    ARCH=$(uname -m)
+    if [ "$ARCH" = "arm64" ]; then
+        echo -e "\nConfigurando PATH de Homebrew para Apple Silicon..."
+        echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zshrc
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    else
+        echo -e "\nConfigurando PATH de Homebrew para Intel..."
+        echo 'eval "$(/usr/local/bin/brew shellenv)"' >> ~/.zshrc
+        eval "$(/usr/local/bin/brew shellenv)"
+    fi
+    echo -e "✓ Homebrew ha sido instalado y configurado en tu ~/.zshrc."
+fi
+pausa
+
+# ------------------------------------------------------------------------------
+# PASO 3: Actualizar catálogos de Homebrew
+# ------------------------------------------------------------------------------
+echo -e "${GREEN}[PASO 3/5] Actualización del sistema Homebrew...${NC}"
+echo -e "Actualizando el índice de paquetes..."
+brew update
+echo -e "✓ Catálogos actualizados correctamente."
+pausa
+
+# ------------------------------------------------------------------------------
+# PASO 4: Instalar requisitos para Antigravity-Cli
+# ------------------------------------------------------------------------------
+echo -e "${GREEN}[PASO 4/5] Instalando dependencias de Antigravity-Cli...${NC}"
+
+# A) Git (para clonación de repositorios y control de código)
+if command -v git &>/dev/null; then
+    echo -e "✓ Git ya está instalado en el sistema."
+else
+    echo -e "Instalando Git via Homebrew..."
+    brew install git
+fi
+
+# B) Node.js (necesario para el ecosistema y dependencias JavaScript del CLI)
+if command -v node &>/dev/null; then
+    echo -e "✓ Node.js ya está instalado en el sistema."
+    node --version
+else
+    echo -e "Instalando Node.js (versión 20 LTS) via Homebrew..."
+    brew install node@20
+    # Enlazar node@20 en el shell
+    brew link --overwrite node@20
+fi
+
+# C) Curl y herramientas de red adicionales
+if command -v curl &>/dev/null; then
+    echo -e "✓ Curl ya está instalado en el sistema."
+else
+    echo -e "Instalando Curl..."
+    brew install curl
+fi
+
+pausa
+
+# ------------------------------------------------------------------------------
+# PASO 5: Verificación final del entorno
+# ------------------------------------------------------------------------------
+echo -e "${GREEN}[PASO 5/5] Resumen de verificación final...${NC}"
+
+echo -e "\n--- ESTADO DEL ENTORNO ---"
+if command -v brew &>/dev/null; then echo -e "Homebrew:  ${GREEN}INSTALADO${NC}"; else echo -e "Homebrew:  ${RED}NO INSTALADO${NC}"; fi
+if command -v git &>/dev/null; then echo -e "Git:       ${GREEN}INSTALADO${NC}"; else echo -e "Git:       ${RED}NO INSTALADO${NC}"; fi
+if command -v node &>/dev/null; then echo -e "Node.js:   ${GREEN}INSTALADO${NC}"; else echo -e "Node.js:   ${RED}NO INSTALADO${NC}"; fi
+if command -v agy &>/dev/null; then echo -e "Agy-Cli:   ${GREEN}INSTALADO${NC}"; else echo -e "Agy-Cli:   ${YELLOW}NO INSTALADO (Listo para instalar)${NC}"; fi
+
+echo -e "\n${BLUE}======================================================================${NC}"
+echo -e "  ¡CONFIGURACIÓN COMPLETADA CON ÉXITO!                                "
+echo -e "${BLUE}======================================================================${NC}"
+echo -e "Tu sistema está listo. Si deseas instalar o iniciar Antigravity, ahora"
+echo -e "tienes todas las herramientas necesarias de base listas para funcionar.\n"

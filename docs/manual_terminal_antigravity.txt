@@ -1,0 +1,132 @@
+================================================================================
+MANUAL TÉCNICO, OPERATIVO Y DE USUARIO: TERMINAL MACOS Y ANTIGRAVITY-CLI (AGY)
+================================================================================
+
+Este documento recopila la información técnica, operativa y de usuario sobre la 
+configuración de la terminal en macOS, el uso óptimo de Antigravity-Cli (agy) 
+y conceptos fundamentales de administración en entornos Unix/macOS.
+
+Ubicación del Espacio de Trabajo: /Users/yarelyvarela/Code
+
+--------------------------------------------------------------------------------
+1. MANUAL DE USUARIO (Inicio Rápido y Uso Diario)
+--------------------------------------------------------------------------------
+
+1.1. ACCESO A LA TERMINAL Y CARPETA DE TRABAJO AUTOMÁTICA
+La terminal de macOS ha sido configurada para posicionarse automáticamente en 
+tu carpeta de trabajo autorizada: `/Users/yarelyvarela/Code`. 
+Cada vez que abras una nueva ventana o pestaña de terminal, estarás listo para 
+trabajar en esta ubicación sin necesidad de escribir comandos de navegación.
+
+1.2. INTERACCIÓN BÁSICA CON EL CLI DE ANTIGRAVITY (agy)
+Para iniciar una sesión de desarrollo asistido con el CLI, ejecuta el comando:
+   agy
+
+1.3. ATAJOS DE TECLADO RÁPIDOS
+* ESC: Cierra menús interactivos o paneles de configuración del CLI.
+* Ctrl + D Ctrl + D: Permite salir y cerrar de forma segura el CLI.
+* Flechas Arriba/Abajo: Permite navegar por el historial de comandos escritos.
+
+--------------------------------------------------------------------------------
+2. MANUAL OPERATIVO (Procedimientos y Buenas Prácticas del CLI)
+--------------------------------------------------------------------------------
+
+El CLI cuenta con comandos interactivos especiales (Slash Commands) que 
+optimizan tus tareas de desarrollo. Utilízalos para gestionar el flujo:
+
+2.1. COMANDOS DE BARRA DIAGONAL MÁS UTILIZADOS
+* /config o /settings  -> Abre el panel interactivo de personalización visual.
+* /permissions        -> Controla los permisos que tiene el agente para leer,
+                         escribir o ejecutar herramientas en tu sistema.
+* /context            -> Muestra qué archivos y fragmentos de código están
+                         cargados en la memoria del agente.
+* /diff               -> Permite auditar exactamente qué cambios de código 
+                         ha propuesto o realizado el agente.
+* /tasks              -> Muestra la cola de tareas asíncronas en segundo plano.
+* /usage o /quota     -> Desglosa el uso de tokens y cuotas de la API de Gemini.
+* /fork o /branch     -> Crea una rama paralela de la conversación para probar
+                         enfoques alternativos sin perder tu historial.
+* /clear o /new       -> Limpia la pantalla de chat actual.
+
+2.2. FLUJO DE TRABAJO RECOMENDADO
+1. Inicia el CLI mediante el comando `agy` dentro de tu repositorio o carpeta.
+2. Si vas a realizar cambios estructurales grandes en tu código, ejecuta 
+   `/fork` antes de iniciar para tener un punto de respaldo.
+3. Solicita los cambios o explicaciones al agente de IA.
+4. Antes de finalizar o confirmar, ejecuta `/diff` para validar visualmente 
+   que las modificaciones sean exactamente lo que esperabas.
+
+--------------------------------------------------------------------------------
+3. MANUAL TÉCNICO (Arquitectura de Configuración y Conceptos del Sistema)
+--------------------------------------------------------------------------------
+
+3.1. CONFIGURACIÓN DE LA SHELL EN MACOS
+macOS utiliza Zsh (Z Shell) como shell interactiva nativa por defecto. Los 
+cambios se implementaron en los siguientes archivos del sistema para asegurar 
+compatibilidad total:
+
+* Archivo Zsh: `/Users/yarelyvarela/.zshrc`
+  Se añadió la instrucción:
+  cd /Users/yarelyvarela/Code
+  
+* Archivo Bash: `/Users/yarelyvarela/.bash_profile` (Creado)
+  Se añadió la misma instrucción de navegación en caso de que utilices bash.
+
+3.2. ARCHIVO DE CONFIGURACIÓN DE ANTIGRAVITY (settings.json)
+La personalización del agente CLI se almacena y puede editarse manualmente en:
+`~/.gemini/antigravity-cli/settings.json`
+
+Claves de configuración recomendadas para macOS:
+* "editor": "code --wait" 
+  (Abre archivos automáticamente en VS Code cuando usas /open)
+* "notifications": true
+  (Envía notificaciones nativas de macOS al terminar tareas en segundo plano)
+* "toolPermission": "request-review"
+  (Garantiza seguridad solicitando aprobación antes de ejecutar comandos)
+* "allowNonWorkspaceAccess": false
+  (Previene que el agente modifique archivos fuera de tu directorio de trabajo)
+
+3.3. CONCEPTOS DE TERMINAL Y ADMINISTRACIÓN EN MACOS (UNIX)
+* Archivos de inicialización (.zshrc vs .zprofile):
+  Use `.zshrc` para configuraciones que deben cargarse en cada ventana nueva de
+  la terminal (alias, variables de entorno temporales, comandos interactivos).
+  Use `.zprofile` solo para configuraciones de inicio de sesión global.
+  
+* Gestor de Paquetes (Homebrew):
+  Herramienta indispensable para instalar software en macOS por línea de
+  comandos. Visita https://brew.sh para instalarlo.
+  Comandos comunes: `brew install <paquete>` y `brew update`.
+  
+* Variable $PATH:
+  Es la variable del sistema que almacena los directorios donde la terminal
+  busca ejecutables. Si un programa instalado no responde, asegúrate de que su
+  ruta esté incluida en el PATH dentro de tu `.zshrc`.
+  
+* Permisos POSIX (chmod):
+  Controla los accesos a tus scripts. Usa `chmod +x <archivo>` para habilitar
+  los permisos de ejecución en un archivo script.
+
+--------------------------------------------------------------------------------
+4. SCRIPT DE INSTALACIÓN AUTOMÁTICA PASO A PASO (instalar_entorno.sh / .txt)
+--------------------------------------------------------------------------------
+
+Para facilitar la configuración de entornos limpios desde cero, se ha desarrollado
+un script interactivo ubicado en:
+`/Users/yarelyvarela/Code/instalar_entorno.sh`
+(Y su copia para compartir sin bloqueos en: `/Users/yarelyvarela/Code/instalar_entorno.txt`)
+
+4.1. CÓMO EJECUTAR EL SCRIPT:
+1. Si usas la versión de texto (.txt) para compartir, renombrala primero a .sh:
+   mv instalar_entorno.txt instalar_entorno.sh
+2. Otorga permisos de ejecución al script (este paso ya está hecho en tu máquina local):
+   chmod +x instalar_entorno.sh
+3. Ejecútalo:
+   ./instalar_entorno.sh
+
+4.2. FASES DE LA INSTALACIÓN INTERACTIVA:
+* Fase 1: Verifica e inicia el instalador nativo de Xcode Command Line Tools.
+* Fase 2: Instala Homebrew de forma oficial y autodetecta la arquitectura de tu 
+  procesador (Intel o Apple Silicon M1/M2/M3) para configurar el $PATH en tu shell.
+* Fase 3: Realiza un refresco y actualización del índice de fórmulas (brew update).
+* Fase 4: Instala y enlaza las dependencias clave para Antigravity: Git, Node.js y Curl.
+* Fase 5: Muestra una tabla comparativa con el diagnóstico de estado final.
