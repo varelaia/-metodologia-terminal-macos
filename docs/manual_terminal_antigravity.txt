@@ -1,132 +1,103 @@
-================================================================================
-MANUAL TÉCNICO, OPERATIVO Y DE USUARIO: TERMINAL MACOS Y ANTIGRAVITY-CLI (AGY)
-================================================================================
+======================================================================
+     MANUAL INTEGRADO DE TERMINAL MACOS (USUARIO, TÉCNICO Y OPERATIVO)
+======================================================================
+Este manual consolida todas las herramientas, configuraciones y scripts 
+implementados en esta sesión en tu Mac.
 
-Este documento recopila la información técnica, operativa y de usuario sobre la 
-configuración de la terminal en macOS, el uso óptimo de Antigravity-Cli (agy) 
-y conceptos fundamentales de administración en entornos Unix/macOS.
+======================================================================
+                     PARTE 1: MANUAL DE USUARIO
+======================================================================
+Diseñado para el uso diario de la terminal de forma sencilla y eficiente.
 
-Ubicación del Espacio de Trabajo: /Users/yarelyvarela/Code
+1. Navegación Automática
+   * Al abrir tu terminal física en tu Mac, se abrirá por defecto 
+     directamente en tu carpeta de proyectos: `/Users/yarelyvarela/Code`.
+   * Tienes un acceso directo (enlace simbólico) llamado "Code" en tu 
+     Escritorio para entrar rápido usando el Finder.
 
---------------------------------------------------------------------------------
-1. MANUAL DE USUARIO (Inicio Rápido y Uso Diario)
---------------------------------------------------------------------------------
+2. Herramientas de Productividad Instaladas:
+   * Navegación Veloz (zoxide):
+     En lugar de escribir rutas largas con "cd", escribe "z" seguido de 
+     una palabra clave de la carpeta a la que quieres ir.
+     Ejemplo: "z metodologia" te llevará instantáneamente al repositorio.
+   * Buscador de Historial (fzf):
+     Presiona la combinación de teclas "Ctrl + R" en tu terminal para 
+     abrir un buscador interactivo en vivo de todos tus comandos antiguos.
+   * Visualización de Archivos (bat):
+     Escribe "bat [nombre-archivo]" para ver su contenido con colores, 
+     números de línea y soporte de Git.
+   * Listar Directorios con Colores (eza):
+     Escribe "eza -l --grid" para listar carpetas con iconos y colores.
+   * Monitor del Sistema (btop):
+     Escribe "btop" para abrir una interfaz visual hermosa en tu consola 
+     que te muestra el uso de CPU, RAM, discos y red en tiempo real.
+   * Manuales Rápidos (tldr):
+     Si olvidas cómo usar un comando, escribe "tldr [comando]" (ej: "tldr git") 
+     para ver ejemplos prácticos resumidos en una sola pantalla.
 
-1.1. ACCESO A LA TERMINAL Y CARPETA DE TRABAJO AUTOMÁTICA
-La terminal de macOS ha sido configurada para posicionarse automáticamente en 
-tu carpeta de trabajo autorizada: `/Users/yarelyvarela/Code`. 
-Cada vez que abras una nueva ventana o pestaña de terminal, estarás listo para 
-trabajar en esta ubicación sin necesidad de escribir comandos de navegación.
+3. Ejecución de Scripts de Automatización:
+   * Para optimizar tu Mac de forma segura:
+     cd /Users/yarelyvarela/Code
+     ./optimizar_equipo.sh
+   * Para aprovisionar o reinstalar tu entorno en otra Mac limpia:
+     cd /Users/yarelyvarela/Code
+     ./instalar_entorno.sh
 
-1.2. INTERACCIÓN BÁSICA CON EL CLI DE ANTIGRAVITY (agy)
-Para iniciar una sesión de desarrollo asistido con el CLI, ejecuta el comando:
-   agy
+======================================================================
+                     PARTE 2: MANUAL TÉCNICO
+======================================================================
+Destinado a administradores de sistema o agentes para comprender la arquitectura.
 
-1.3. ATAJOS DE TECLADO RÁPIDOS
-* ESC: Cierra menús interactivos o paneles de configuración del CLI.
-* Ctrl + D Ctrl + D: Permite salir y cerrar de forma segura el CLI.
-* Flechas Arriba/Abajo: Permite navegar por el historial de comandos escritos.
+1. Archivos de Configuración de la Shell (~/.zshrc)
+   Las inicializaciones y rutas de las nuevas herramientas están enlazadas 
+   al final del archivo de configuración global de Zsh:
+   * PATH de Python 3.12:
+     export PATH="/usr/local/opt/python@3.12/libexec/bin:$PATH"
+   * Inicialización de Zoxide:
+     eval "$(zoxide init zsh)"
+   * Integración de Fzf:
+     source <(fzf --zsh)
+   * Carga de Plugins de Consola:
+     source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+     source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
---------------------------------------------------------------------------------
-2. MANUAL OPERATIVO (Procedimientos y Buenas Prácticas del CLI)
---------------------------------------------------------------------------------
+2. Parámetros del Sistema macOS Modificados (Defaults)
+   Se aplicaron los siguientes defaults de sistema en macOS:
+   * defaults write com.apple.finder AppleShowAllFiles -bool true (Ver archivos ocultos)
+   * defaults write NSGlobalDomain AppleShowAllExtensions -bool true (Ver extensiones)
+   * defaults write NSGlobalDomain KeyRepeat -int 1 (Velocidad de repetición de teclas al máximo)
+   * defaults write NSGlobalDomain InitialKeyRepeat -int 10 (Retraso mínimo de repetición)
+   * defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false (Desactivar autocorrección global)
 
-El CLI cuenta con comandos interactivos especiales (Slash Commands) que 
-optimizan tus tareas de desarrollo. Utilízalos para gestionar el flujo:
+3. Criptografía y Conexiones Git
+   * Llave SSH generada: Algoritmo Ed25519 (~/.ssh/id_ed25519).
+   * Mapeo de Red SSH: Archivo ~/.ssh/config configurado para mapear 
+     github.com asociando la llave id_ed25519 de forma permanente al Llavero.
 
-2.1. COMANDOS DE BARRA DIAGONAL MÁS UTILIZADOS
-* /config o /settings  -> Abre el panel interactivo de personalización visual.
-* /permissions        -> Controla los permisos que tiene el agente para leer,
-                         escribir o ejecutar herramientas en tu sistema.
-* /context            -> Muestra qué archivos y fragmentos de código están
-                         cargados en la memoria del agente.
-* /diff               -> Permite auditar exactamente qué cambios de código 
-                         ha propuesto o realizado el agente.
-* /tasks              -> Muestra la cola de tareas asíncronas en segundo plano.
-* /usage o /quota     -> Desglosa el uso de tokens y cuotas de la API de Gemini.
-* /fork o /branch     -> Crea una rama paralela de la conversación para probar
-                         enfoques alternativos sin perder tu historial.
-* /clear o /new       -> Limpia la pantalla de chat actual.
+======================================================================
+                     PARTE 3: MANUAL OPERATIVO
+======================================================================
+Define las tareas de mantenimiento recurrente para asegurar la salud de la Mac.
 
-2.2. FLUJO DE TRABAJO RECOMENDADO
-1. Inicia el CLI mediante el comando `agy` dentro de tu repositorio o carpeta.
-2. Si vas a realizar cambios estructurales grandes en tu código, ejecuta 
-   `/fork` antes de iniciar para tener un punto de respaldo.
-3. Solicita los cambios o explicaciones al agente de IA.
-4. Antes de finalizar o confirmar, ejecuta `/diff` para validar visualmente 
-   que las modificaciones sean exactamente lo que esperabas.
+1. Mantenimiento de Software (Homebrew):
+   * Para actualizar el índice local de fórmulas:
+     brew update
+   * Para actualizar e instalar parches de seguridad de todos tus paquetes:
+     brew upgrade
 
---------------------------------------------------------------------------------
-3. MANUAL TÉCNICO (Arquitectura de Configuración y Conceptos del Sistema)
---------------------------------------------------------------------------------
+2. Optimización Semanal del Sistema:
+   Se recomienda ejecutar una vez a la semana el script "./optimizar_equipo.sh".
+   Este script ejecuta un Premortem Gate en vivo comprobando si existen 
+   servidores de bases de datos o desarrollo activos (puertos 3000, 5173, etc.) 
+   antes de limpiar cachés de desarrollo para evitar pérdidas de estado.
 
-3.1. CONFIGURACIÓN DE LA SHELL EN MACOS
-macOS utiliza Zsh (Z Shell) como shell interactiva nativa por defecto. Los 
-cambios se implementaron en los siguientes archivos del sistema para asegurar 
-compatibilidad total:
-
-* Archivo Zsh: `/Users/yarelyvarela/.zshrc`
-  Se añadió la instrucción:
-  cd /Users/yarelyvarela/Code
-  
-* Archivo Bash: `/Users/yarelyvarela/.bash_profile` (Creado)
-  Se añadió la misma instrucción de navegación en caso de que utilices bash.
-
-3.2. ARCHIVO DE CONFIGURACIÓN DE ANTIGRAVITY (settings.json)
-La personalización del agente CLI se almacena y puede editarse manualmente en:
-`~/.gemini/antigravity-cli/settings.json`
-
-Claves de configuración recomendadas para macOS:
-* "editor": "code --wait" 
-  (Abre archivos automáticamente en VS Code cuando usas /open)
-* "notifications": true
-  (Envía notificaciones nativas de macOS al terminar tareas en segundo plano)
-* "toolPermission": "request-review"
-  (Garantiza seguridad solicitando aprobación antes de ejecutar comandos)
-* "allowNonWorkspaceAccess": false
-  (Previene que el agente modifique archivos fuera de tu directorio de trabajo)
-
-3.3. CONCEPTOS DE TERMINAL Y ADMINISTRACIÓN EN MACOS (UNIX)
-* Archivos de inicialización (.zshrc vs .zprofile):
-  Use `.zshrc` para configuraciones que deben cargarse en cada ventana nueva de
-  la terminal (alias, variables de entorno temporales, comandos interactivos).
-  Use `.zprofile` solo para configuraciones de inicio de sesión global.
-  
-* Gestor de Paquetes (Homebrew):
-  Herramienta indispensable para instalar software en macOS por línea de
-  comandos. Visita https://brew.sh para instalarlo.
-  Comandos comunes: `brew install <paquete>` y `brew update`.
-  
-* Variable $PATH:
-  Es la variable del sistema que almacena los directorios donde la terminal
-  busca ejecutables. Si un programa instalado no responde, asegúrate de que su
-  ruta esté incluida en el PATH dentro de tu `.zshrc`.
-  
-* Permisos POSIX (chmod):
-  Controla los accesos a tus scripts. Usa `chmod +x <archivo>` para habilitar
-  los permisos de ejecución en un archivo script.
-
---------------------------------------------------------------------------------
-4. SCRIPT DE INSTALACIÓN AUTOMÁTICA PASO A PASO (instalar_entorno.sh / .txt)
---------------------------------------------------------------------------------
-
-Para facilitar la configuración de entornos limpios desde cero, se ha desarrollado
-un script interactivo ubicado en:
-`/Users/yarelyvarela/Code/instalar_entorno.sh`
-(Y su copia para compartir sin bloqueos en: `/Users/yarelyvarela/Code/instalar_entorno.txt`)
-
-4.1. CÓMO EJECUTAR EL SCRIPT:
-1. Si usas la versión de texto (.txt) para compartir, renombrala primero a .sh:
-   mv instalar_entorno.txt instalar_entorno.sh
-2. Otorga permisos de ejecución al script (este paso ya está hecho en tu máquina local):
-   chmod +x instalar_entorno.sh
-3. Ejecútalo:
-   ./instalar_entorno.sh
-
-4.2. FASES DE LA INSTALACIÓN INTERACTIVA:
-* Fase 1: Verifica e inicia el instalador nativo de Xcode Command Line Tools.
-* Fase 2: Instala Homebrew de forma oficial y autodetecta la arquitectura de tu 
-  procesador (Intel o Apple Silicon M1/M2/M3) para configurar el $PATH en tu shell.
-* Fase 3: Realiza un refresco y actualización del índice de fórmulas (brew update).
-* Fase 4: Instala y enlaza las dependencias clave para Antigravity: Git, Node.js y Curl.
-* Fase 5: Muestra una tabla comparativa con el diagnóstico de estado final.
+3. Sincronización de Metodologías y Skills:
+   La metodología sanitizada se encuentra publicada en el repositorio:
+   https://github.com/varelaia/-metodologia-terminal-macos
+   * Para subir actualizaciones desde la carpeta local:
+     git add .
+     git commit -m "Descripción del cambio"
+     git push origin main
+   * Para descargar cambios en otro equipo:
+     git pull origin main
+======================================================================
